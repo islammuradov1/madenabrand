@@ -50,16 +50,25 @@ export async function getProductsFromSheet(): Promise<SheetProduct[]> {
   const res = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range });
   const rows = res.data.values || [];
 
-  // Filter out fully empty rows
-  const nonEmptyRows = rows.filter(
-    (r) => r.some((cell) => cell !== undefined && cell !== null && cell.toString().trim() !== "")
+  // Filter out fully empty rows and rows without imageUrl
+  const validRows = rows.filter(
+    (r) =>
+      r.some((cell) => cell !== undefined && cell !== null && cell.toString().trim() !== "") &&
+      r[3] && r[3].toString().trim() !== "" // imageUrl column must be non-empty
   );
 
-  return nonEmptyRows.map((r) => ({
-    id: r[0],
-    name: r[1] || "",
-    price: r[2] || "0",
-    imageUrl: r[3] || "/logo.png",
-    whatsappMessage: r[4] || "",
-  }));
+  // Take the last 3 products with images
+  const lastThree = validRows.slice(-3);
+
+  return lastThree
+    .reverse() // newest first
+    .map((r) => ({
+      id: r[0],
+      name: r[1] || "",
+      price: r[2] || "0",
+      imageUrl: r[3] || "/logo.png",
+      whatsappMessage:
+        r[4] ||
+        `Salam, bu məhsulu sifariş etmək istəyirəm: ${r[1] || "Məhsul"}`,
+    }));
 }
