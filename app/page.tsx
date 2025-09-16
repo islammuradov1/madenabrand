@@ -1,4 +1,3 @@
-// File: app/page.tsx (Next.js 13+ / App Router)
 import React from "react";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 import ProductCard from "@/components/ProductCard";
@@ -10,20 +9,23 @@ export default async function HomePage() {
   try {
     const allProducts = await getProductsFromSheet();
 
-    // Filter out fully empty rows and rows missing essential info
+    // Step 1: filter out rows missing essential info
     const validProducts = allProducts.filter(
       (p) =>
-        p.name?.trim() &&
+        (p.name?.trim() || p.id?.trim()) && // must have at least a name or id
         p.price?.toString().trim() &&
-        p.imageUrl?.trim() // ensure at least these exist
+        p.imageUrl?.trim()
     );
 
-    // Take the last 3 products and show newest first
-    products = validProducts.slice(-3).reverse();
+    // Step 2: take the last 3 valid products (newest first)
+    products = validProducts.length > 3
+      ? validProducts.slice(-3).reverse()
+      : validProducts.reverse();
+
   } catch (err) {
     console.error("Failed to fetch products from Google Sheets:", err);
 
-    // Fallback mock product
+    // fallback mock
     products = [
       {
         id: "MB-001",
@@ -38,10 +40,8 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#fff9f8] via-[#fdfbf9] to-[#faf7f3] text-gray-800 font-sans relative overflow-hidden">
-      {/* Soft shimmer overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#ffe6f0,_transparent_60%)] pointer-events-none"></div>
 
-      {/* Header */}
       <header className="relative z-10 max-w-7xl mx-auto px-6 py-8 flex items-center justify-between border-b border-[#f2e4da]">
         <div className="flex items-center gap-4">
           <Image src="/logo.png" alt="Madena Brand" width={64} height={64} />
@@ -54,10 +54,8 @@ export default async function HomePage() {
             </p>
           </div>
         </div>
-        <nav className="flex items-center gap-6 text-sm font-medium"></nav>
       </header>
 
-      {/* Hero Section */}
       <section className="relative py-24 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-6xl font-serif tracking-wide bg-gradient-to-r from-[#d4a373] to-[#e7bfa5] text-transparent bg-clip-text drop-shadow-sm">
@@ -67,7 +65,6 @@ export default async function HomePage() {
             Hər detalda incəlik — hər çantada sənət.
           </p>
 
-          {/* Buttons */}
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <a
               href="#products"
@@ -85,41 +82,31 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Products Section */}
-      <section
-        className="py-20 bg-white/70 backdrop-blur-sm relative z-10"
-        id="products"
-      >
+      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10" id="products">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
             Yeni kolleksiya
           </h2>
-
           <p className="text-gray-600 text-lg">
             Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
           </p>
 
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {products.map((p, idx) => (
-              <div
+              <ProductCard
                 key={p.id ?? idx}
-                className="transform hover:-translate-y-3 hover:shadow-2xl transition-all duration-500"
-              >
-                <ProductCard
-                  product={{
-                    ...p,
-                    price: p.price || "0",
-                    imageUrl: p.imageUrl || "/logo.png",
-                    whatsappMessage:
-                      p.whatsappMessage ||
-                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`,
-                  }}
-                />
-              </div>
+                product={{
+                  ...p,
+                  price: p.price || "0",
+                  imageUrl: p.imageUrl || "/logo.png",
+                  whatsappMessage:
+                    p.whatsappMessage ||
+                    `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`,
+                }}
+              />
             ))}
           </div>
 
-          {/* View All Products Button */}
           <div className="mt-12">
             <a
               href="/products"
@@ -131,7 +118,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-[#f0e4d8] py-10 mt-24 bg-[#fffaf7] relative z-10">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
           © {new Date().getFullYear()}{" "}
@@ -140,10 +126,7 @@ export default async function HomePage() {
           </span>{" "}
           — Bütün hüquqlar qorunur. <br />
           Instagram:{" "}
-          <a
-            href="https://instagram.com/madenabrand"
-            className="hover:text-[#C19A6B]"
-          >
+          <a href="https://instagram.com/madenabrand" className="hover:text-[#C19A6B]">
             @madenabrand
           </a>
         </div>
