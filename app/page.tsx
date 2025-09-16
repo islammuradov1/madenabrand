@@ -20,9 +20,9 @@ export default function HomePage() {
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        // take earliest 3 products
-        const earliest3 = data.slice(0, 3);
-        setProducts(earliest3);
+        // Take latest 3 products (assuming last items are newest)
+        const latest3 = data.slice(-3).reverse(); 
+        setProducts(latest3);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -60,39 +60,38 @@ export default function HomePage() {
         </div>
       </section>
 
-    {/* Products Grid */}
-<section className="py-20 bg-white/70 backdrop-blur-sm relative z-10">
-  <div className="max-w-7xl mx-auto px-6 text-center">
-    <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
-      Yeni kolleksiya
-    </h2>
-    <p className="text-gray-600 text-lg mb-12">
-      Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
-    </p>
+      {/* Products Grid */}
+      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
+            Yeni kolleksiya
+          </h2>
+          <p className="text-gray-600 text-lg mb-12">
+            Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
+          </p>
 
-    {products.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {products.map((p, idx) => (
-          <ProductCard
-            key={p.id ?? idx}
-            product={{
-              id: p.id ?? `product-${idx}`,
-              name: p.name || "Məhsul adı yoxdur",
-              price: p.price || "0",
-              imageUrl: p.imageUrl || "/logo.png",
-              whatsappMessage:
-                p.whatsappMessage ||
-                `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name || "Məhsul"}`,
-            }}
-          />
-        ))}
-      </div>
-    ) : (
-      <p className="text-gray-500 mt-10 text-lg">Heç bir məhsul tapılmadı.</p>
-    )}
-  </div>
-</section>
-
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              {products.map((p, idx) => (
+                <ProductCard
+                  key={p.id ?? idx}
+                  product={{
+                    id: p.id ?? `product-${idx}`,
+                    name: p.name || "Məhsul adı yoxdur",
+                    price: p.price || "0",
+                    imageUrl: p.imageUrl || "/logo.png",
+                    whatsappMessage:
+                      p.whatsappMessage ||
+                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name || "Məhsul"}`,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 mt-10 text-lg">Heç bir məhsul tapılmadı.</p>
+          )}
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-[#f0e4d8] py-10 mt-24 bg-[#fffaf7] relative z-10">
