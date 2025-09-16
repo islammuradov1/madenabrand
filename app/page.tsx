@@ -20,8 +20,8 @@ export default function HomePage() {
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        // Take latest 3 products (assuming last items are newest)
-        const latest3 = data.slice(-3).reverse(); 
+        // Latest 3 products
+        const latest3 = data.slice(-3).reverse();
         setProducts(latest3);
       })
       .catch(console.error)
@@ -57,11 +57,27 @@ export default function HomePage() {
           <p className="mt-6 text-lg text-gray-600">
             Hər detalda incəlik — hər çantada sənət.
           </p>
+
+          {/* Buttons */}
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href="#products"
+              className="inline-block px-10 py-3 bg-gradient-to-r from-[#d4a373] to-[#e0c097] text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              ✨ Kolleksiyanı kəşf et
+            </a>
+            <a
+              href="/products"
+              className="inline-block px-10 py-3 bg-gradient-to-r from-[#d4a373] to-[#e0c097] text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              💎 Bütün məhsulları gör
+            </a>
+          </div>
         </div>
       </section>
 
       {/* Products Grid */}
-      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10">
+      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10" id="products">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
             Yeni kolleksiya
