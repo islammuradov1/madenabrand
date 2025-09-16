@@ -60,37 +60,39 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Products Grid */}
-      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
-            Yeni kolleksiya
-          </h2>
-          <p className="text-gray-600 text-lg mb-12">
-            Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
-          </p>
+    {/* Products Grid */}
+<section className="py-20 bg-white/70 backdrop-blur-sm relative z-10">
+  <div className="max-w-7xl mx-auto px-6 text-center">
+    <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
+      Yeni kolleksiya
+    </h2>
+    <p className="text-gray-600 text-lg mb-12">
+      Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
+    </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {products.length > 0 ? (
-              products.map((p, idx) => (
-                <ProductCard
-                  key={p.id ?? idx}
-                  product={{
-                    ...p,
-                    price: p.price || "0",
-                    imageUrl: p.imageUrl || "/logo.png",
-                    whatsappMessage:
-                      p.whatsappMessage ||
-                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`,
-                  }}
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 mt-10">Heç bir məhsul tapılmadı.</p>
-            )}
-          </div>
-        </div>
-      </section>
+    {products.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {products.map((p, idx) => (
+          <ProductCard
+            key={p.id ?? idx}
+            product={{
+              id: p.id ?? `product-${idx}`,
+              name: p.name || "Məhsul adı yoxdur",
+              price: p.price || "0",
+              imageUrl: p.imageUrl || "/logo.png",
+              whatsappMessage:
+                p.whatsappMessage ||
+                `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name || "Məhsul"}`,
+            }}
+          />
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500 mt-10 text-lg">Heç bir məhsul tapılmadı.</p>
+    )}
+  </div>
+</section>
+
 
       {/* Footer */}
       <footer className="border-t border-[#f0e4d8] py-10 mt-24 bg-[#fffaf7] relative z-10">
