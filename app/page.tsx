@@ -10,16 +10,19 @@ export default async function HomePage() {
   try {
     const allProducts = await getProductsFromSheet();
 
-    // Filter out rows missing essential info
+    // Filter out fully empty rows and rows missing essential info
     const validProducts = allProducts.filter(
-      (p) => p.name && p.price && p.imageUrl
+      (p) =>
+        p.name?.trim() &&
+        p.price?.toString().trim() &&
+        p.imageUrl?.trim() // ensure at least these exist
     );
 
     // Take the last 3 products and show newest first
     products = validProducts.slice(-3).reverse();
-
   } catch (err) {
     console.error("Failed to fetch products from Google Sheets:", err);
+
     // Fallback mock product
     products = [
       {
