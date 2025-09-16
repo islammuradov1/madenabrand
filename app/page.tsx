@@ -17,23 +17,34 @@ export default async function HomePage() {
         p.imageUrl?.trim()
     );
 
-    // Step 2: take the last 3 valid products (newest first)
-    products = validProducts.length > 3
-      ? validProducts.slice(-3).reverse()
-      : validProducts.reverse();
+    // Step 2: take only the earliest 3 products
+    products = validProducts.length > 3 ? validProducts.slice(0, 3) : validProducts;
 
   } catch (err) {
     console.error("Failed to fetch products from Google Sheets:", err);
 
-    // fallback mock
+    // fallback mock (3 products)
     products = [
       {
         id: "MB-001",
         name: "Classic Leather Tote",
         price: "120",
         imageUrl: "/logo.png",
-        whatsappMessage:
-          "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
+        whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
+      },
+      {
+        id: "MB-002",
+        name: "Elegant Handbag",
+        price: "150",
+        imageUrl: "/logo.png",
+        whatsappMessage: "Salam, mən Elegant Handbag sifariş etmək istəyirəm.",
+      },
+      {
+        id: "MB-003",
+        name: "Stylish Backpack",
+        price: "90",
+        imageUrl: "/logo.png",
+        whatsappMessage: "Salam, mən Stylish Backpack sifariş etmək istəyirəm.",
       },
     ];
   }
