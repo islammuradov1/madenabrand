@@ -1,14 +1,15 @@
 import React from "react";
-import { getProductsFromSheet2, SheetProduct } from "@/lib/sheets-2";
+import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
+import ProductCard from "@/components/ProductCard";
 import Image from "next/image";
 
 export default async function HomePage() {
   let products: SheetProduct[] = [];
 
   try {
-    const allProducts = await getProductsFromSheet2();
+    const allProducts = await getProductsFromSheet();
 
-    // Filter valid products
+    // Step 1: filter out rows missing essential info
     const validProducts = allProducts.filter(
       (p) =>
         (p.name?.trim() || p.id?.trim()) && // must have at least a name or id
@@ -16,11 +17,11 @@ export default async function HomePage() {
         p.imageUrl?.trim()
     );
 
-    // Take last 3 valid products (newest first)
-    products =
-      validProducts.length > 3
-        ? validProducts.slice(-3).reverse()
-        : validProducts.reverse();
+    // Step 2: take the last 3 valid products (newest first)
+    products = validProducts.length > 3
+      ? validProducts.slice(-3).reverse()
+      : validProducts.reverse();
+
   } catch (err) {
     console.error("Failed to fetch products from Google Sheets:", err);
 
@@ -81,7 +82,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Latest 3 Products Section */}
       <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10" id="products">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
@@ -93,32 +93,17 @@ export default async function HomePage() {
 
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {products.map((p, idx) => (
-              <div
+              <ProductCard
                 key={p.id ?? idx}
-                className="flex flex-col items-center transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="w-full aspect-square sm:aspect-[4/3] relative rounded-xl overflow-hidden shadow-sm">
-                  <Image
-                    src={p.imageUrl || "/logo.png"}
-                    alt={p.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="mt-3 text-sm sm:text-base font-semibold text-[#1A1A1A] text-center">
-                  {p.name}
-                </h3>
-                <p className="text-[#C19A6B] font-medium mt-1">{p.price} AZN</p>
-                <a
-                  href={`https://wa.me/9945555514243?text=${encodeURIComponent(
+                product={{
+                  ...p,
+                  price: p.price || "0",
+                  imageUrl: p.imageUrl || "/logo.png",
+                  whatsappMessage:
                     p.whatsappMessage ||
-                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`
-                  )}`}
-                  className="mt-2 mb-2 w-full block px-4 py-3 text-white bg-[#C19A6B] rounded-none text-sm font-semibold shadow hover:scale-105 hover:shadow-lg transition-all text-center"
-                >
-                  Sifariş et
-                </a>
-              </div>
+                    `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`,
+                }}
+              />
             ))}
           </div>
 
