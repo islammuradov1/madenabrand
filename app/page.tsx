@@ -1,3 +1,4 @@
+// File: app/page.tsx (Next.js 13+ / App Router)
 import React from "react";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 import ProductCard from "@/components/ProductCard";
@@ -7,18 +8,27 @@ export default async function HomePage() {
   let products: SheetProduct[] = [];
 
   try {
-    products = await getProductsFromSheet();
-    // Only take the last 3 products
-    products = products.slice(-3).reverse(); // reverse to show newest first
+    const allProducts = await getProductsFromSheet();
+
+    // Filter out rows missing essential info
+    const validProducts = allProducts.filter(
+      (p) => p.name && p.price && p.imageUrl
+    );
+
+    // Take the last 3 products and show newest first
+    products = validProducts.slice(-3).reverse();
+
   } catch (err) {
     console.error("Failed to fetch products from Google Sheets:", err);
+    // Fallback mock product
     products = [
       {
         id: "MB-001",
         name: "Classic Leather Tote",
         price: "120",
         imageUrl: "/logo.png",
-        whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
+        whatsappMessage:
+          "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
       },
     ];
   }
@@ -73,7 +83,10 @@ export default async function HomePage() {
       </section>
 
       {/* Products Section */}
-      <section className="py-20 bg-white/70 backdrop-blur-sm relative z-10" id="products">
+      <section
+        className="py-20 bg-white/70 backdrop-blur-sm relative z-10"
+        id="products"
+      >
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
             Yeni kolleksiya
@@ -89,7 +102,16 @@ export default async function HomePage() {
                 key={p.id ?? idx}
                 className="transform hover:-translate-y-3 hover:shadow-2xl transition-all duration-500"
               >
-                <ProductCard product={p} />
+                <ProductCard
+                  product={{
+                    ...p,
+                    price: p.price || "0",
+                    imageUrl: p.imageUrl || "/logo.png",
+                    whatsappMessage:
+                      p.whatsappMessage ||
+                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name}`,
+                  }}
+                />
               </div>
             ))}
           </div>
