@@ -29,8 +29,8 @@ export async function getProductsFromSheet(): Promise<SheetProduct[]> {
         name: "Classic Leather Tote",
         price: "120",
         imageUrl: "/logo.png",
-        whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
-      },
+        whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm."
+      }
     ];
   }
 
@@ -50,16 +50,11 @@ export async function getProductsFromSheet(): Promise<SheetProduct[]> {
   const res = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range });
   const rows = res.data.values || [];
 
-  // Filter out fully empty rows
-  const nonEmptyRows = rows.filter(
-    (r) => r.some((cell) => cell !== undefined && cell !== null && cell.toString().trim() !== "")
-  );
-
-  return nonEmptyRows.map((r) => ({
+  return rows.map((r) => ({
     id: r[0],
     name: r[1] || "",
     price: r[2] || "0",
     imageUrl: r[3] || "/logo.png",
-    whatsappMessage: r[4] || "",
+    whatsappMessage: r[4] || ""
   }));
 }
