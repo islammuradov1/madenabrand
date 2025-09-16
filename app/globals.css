@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root luxury theme variables */
+:root {
+  --luxury-bg: #FAF9F6; /* soft ivory */
+  --luxury-text: #1A1A1A; /* rich deep black */
+  --luxury-accent: #C5A572; /* muted luxury gold */
+  --luxury-muted: #6B7280; /* gray for secondary text */
+}
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  background-color: var(--luxury-bg);
+  color: var(--luxury-text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Headings: serif luxury feel */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: -0.02em;
+  color: var(--luxury-text);
+}
+
+/* Links */
+a {
+  color: var(--luxury-text);
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+a:hover {
+  color: var(--luxury-accent);
+}
+
+/* Buttons */
+button {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* Smooth section spacing */
+section {
+  scroll-margin-top: 5rem;
+}
+
+/* Luxury container spacing */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
