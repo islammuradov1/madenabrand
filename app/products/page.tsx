@@ -1,8 +1,8 @@
 "use client";
+
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import Image from "next/image";
 
 type Product = {
   id?: string;
@@ -14,6 +14,7 @@ type Product = {
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -23,18 +24,24 @@ export default function ProductsPage() {
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => setProducts(data))
+      .then((data) => {
+        setProducts(data);
+        setFilteredProducts(data); // initially show all
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredProducts = products.filter((p) => {
-    const matchesName = p.name.toLowerCase().includes(search.toLowerCase());
-    const priceNum = parseFloat(p.price);
-    const matchesMin = minPrice === "" || priceNum >= minPrice;
-    const matchesMax = maxPrice === "" || priceNum <= maxPrice;
-    return matchesName && matchesMin && matchesMax;
-  });
+  const handleFilter = () => {
+    const filtered = products.filter((p) => {
+      const matchesName = p.name.toLowerCase().includes(search.toLowerCase());
+      const priceNum = parseFloat(p.price);
+      const matchesMin = minPrice === "" || priceNum >= minPrice;
+      const matchesMax = maxPrice === "" || priceNum <= maxPrice;
+      return matchesName && matchesMin && matchesMax;
+    });
+    setFilteredProducts(filtered);
+  };
 
   if (loading) return <p className="text-center mt-20">Yüklənir...</p>;
 
@@ -42,18 +49,18 @@ export default function ProductsPage() {
     <main className="min-h-screen bg-[#fff9f8] text-gray-800 font-sans relative overflow-hidden">
       {/* Header */}
       <header className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex items-center justify-between border-b border-[#f2e4da]">
-  <Link href="/" className="flex items-center gap-4">
-    <Image src="/logo.png" alt="Madena Brand" width={48} height={48} />
-    <div>
-      <h1 className="text-2xl sm:text-3xl font-serif tracking-wide text-[#1A1A1A]">
-        MADENA BRAND
-      </h1>
-      <p className="text-xs sm:text-sm text-gray-500 italic">
-        Premium bags — Azerbaijan
-      </p>
-    </div>
-  </Link>
-</header>
+        <Link href="/" className="flex items-center gap-4">
+          <img src="/logo.png" alt="Madena Brand" className="w-12 h-12" />
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-serif tracking-wide text-[#1A1A1A]">
+              MADENA BRAND
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500 italic">
+              Premium bags — Azerbaijan
+            </p>
+          </div>
+        </Link>
+      </header>
 
       {/* Filters */}
       <section className="py-12 sm:py-16 bg-white/70 backdrop-blur-sm relative z-10">
@@ -86,37 +93,19 @@ export default function ProductsPage() {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C19A6B] w-full text-sm sm:text-base"
               />
             </div>
+            <button
+              onClick={handleFilter}
+              className="px-6 py-2 bg-[#C19A6B] text-white rounded-lg text-sm sm:text-base font-medium hover:scale-105 transition-transform"
+            >
+              Filtrlə
+            </button>
           </div>
 
           {/* Products Grid */}
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
               {filteredProducts.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex flex-col items-center transform hover:-translate-y-2 hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="w-full aspect-square sm:aspect-[4/3] relative rounded-xl overflow-hidden shadow-sm">
-                    <Image
-                      src={p.imageUrl || "/logo.png"}
-                      alt={p.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <h3 className="mt-3 text-sm sm:text-base font-semibold text-[#1A1A1A] text-center">
-                    {p.name}
-                  </h3>
-                  <p className="text-[#C19A6B] font-medium mt-1">{p.price} AZN</p>
-<a
-  href={`https://wa.me/9945555514243?text=${encodeURIComponent(
-    p.whatsappMessage || ""
-  )}`}
-  className="mt-2 mb-2 w-full block px-4 py-3 text-white bg-[#C19A6B] rounded-none text-sm font-semibold shadow hover:scale-105 hover:shadow-lg transition-all text-center"
->
-  Sifariş et
-</a>
-                </div>
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           ) : (
