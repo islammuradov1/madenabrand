@@ -1,73 +1,42 @@
-// lib/sheets.ts
-import { google } from "googleapis";
+// app/api/products/route.ts
+import { NextResponse } from "next/server";
+import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 
-export interface SheetProduct {
-  id: string;
-  name: string;
-  price: string;
-  imageUrls: string[];
-  whatsappMessage?: string;
-}
-
-const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID || "";
-const SHEET_NAME = "Products";
-
-const auth = new google.auth.GoogleAuth({
-  keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_KEYFILE, // e.g., madenabrend-472114-d2044b27edde.json
-  scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-});
-
-const sheets = google.sheets({ version: "v4", auth });
-
-export async function getProductsFromSheet(): Promise<SheetProduct[]> {
-  if (!SPREADSHEET_ID) {
-    console.warn("⚠️ GOOGLE_SHEET_ID not set in environment");
-    return [];
-  }
-
+export async function GET() {
   try {
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: SHEET_NAME,
-    });
+    const products: SheetProduct[] = await getProductsFromSheet();
 
-    const rows = response.data.values || [];
+    // Ensure imageUrls is always an array
+    const normalized = products.map((p) => ({
+      ...p,
+      imageUrls: Array.isArray(p.imageUrls)
+        ? p.imageUrls
+        : p.imageUrls
+        ? [p.imageUrls].flat()
+        : [],
+    }));
 
-    if (rows.length < 2) return []; // no data
-
-    const headers = rows[0];
-    const dataRows = rows.slice(1);
-
-    const products: SheetProduct[] = dataRows.map((row) => {
-      const rowObj: Record<string, string> = {};
-      headers.forEach((header, i) => {
-        rowObj[header] = row[i] || "";
-      });
-
-      const rawImageUrls = rowObj["imageUrls"] || rowObj["imageUrl"];
-      const imageUrls: string[] =
-        rawImageUrls
-          ?.toString()
-          .split(",")
-          .map((url: string) => url.trim())
-          .filter(Boolean) || ["/logo.png"];
-
-      const whatsappMessage =
-        rowObj["whatsappMessage"] ||
-        `Salam, mən ${rowObj["name"]} sifariş etmək istəyirəm.`;
-
-      return {
-        id: rowObj["id"] || crypto.randomUUID(),
-        name: rowObj["name"] || "Unnamed Product",
-        price: rowObj["price"] || "0",
-        imageUrls,
-        whatsappMessage,
-      };
-    });
-
-    return products;
+    return NextResponse.json(normalized);
   } catch (err) {
-    console.error("❌ Failed to fetch sheet data:", err);
-    return [];
+    console.error("❌ Failed to fetch products:", err);
+
+    const fallback: SheetProduct[] = [
+      {
+        id: "MB-001",
+        name: "Classic Leather Tote",
+        price: "120",
+        imageUrls: ["/logo.png"],
+        whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
+      },
+      {
+        id: "MB-002",
+        name: "Elegant Shoulder Bag",
+        price: "150",
+        imageUrls: ["/logo.png"],
+        whatsappMessage: "Salam, mən Elegant Shoulder Bag sifariş etmək istəyirəm.",
+      },
+    ];
+
+    return NextResponse.json(fallback, { status: 200 });
   }
 }
