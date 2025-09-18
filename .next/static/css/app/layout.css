@@ -717,6 +717,10 @@ video {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
 }
+.bg-\[\#C19A6B\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(193 154 107 / var(--tw-bg-opacity, 1));
+}
 .bg-\[\#fff9f8\] {
   --tw-bg-opacity: 1;
   background-color: rgb(255 249 248 / var(--tw-bg-opacity, 1));
@@ -735,10 +739,6 @@ video {
 }
 .bg-white\/70 {
   background-color: rgb(255 255 255 / 0.7);
-}
-.bg-\[\#C19A6B\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(193 154 107 / var(--tw-bg-opacity, 1));
 }
 .bg-\[radial-gradient\(circle_at_top_left\2c rgba\(255\2c 255\2c 255\2c 0\.8\)\2c transparent_70\%\)\] {
   background-image: radial-gradient(circle at top left,rgba(255,255,255,0.8),transparent 70%);
