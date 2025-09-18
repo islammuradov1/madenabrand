@@ -18,19 +18,23 @@ export default function ImageSlider({
 }: Props) {
   const [current, setCurrent] = useState(0);
 
+  // Guard: no images
   if (!images || images.length === 0) return null;
 
   // Auto-play effect
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay || images.length <= 1) return;
+
     const timer = setInterval(() => {
       setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }, interval);
+
     return () => clearInterval(timer);
   }, [autoPlay, interval, images.length]);
 
   const nextSlide = () =>
     setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+
   const prevSlide = () =>
     setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
 
@@ -44,6 +48,7 @@ export default function ImageSlider({
             src={img}
             alt={`${productName} image ${index + 1}`}
             fill
+            sizes="100vw"
             className={`object-contain transition-opacity duration-700 ease-in-out ${
               index === current ? "opacity-100" : "opacity-0"
             }`}
