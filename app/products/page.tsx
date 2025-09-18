@@ -95,7 +95,7 @@ export default function ProductsPage() {
             </div>
             <button
               onClick={handleFilter}
-              className="px-6 py-2 bg-[#C19A6B] text-white rounded-lg text-sm sm:text-base font-medium hover:scale-105 transition-transform"
+              className="px-6 py-2 bg-[#C19A6B] text-white text-sm sm:text-base font-medium hover:scale-105 transition-transform"
             >
               Filtrlə
             </button>

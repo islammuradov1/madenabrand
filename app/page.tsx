@@ -8,7 +8,7 @@ type Product = {
   id?: string;
   name: string;
   price: string;
-  imageUrl?: string;
+  imageUrls?: string[]; // already split in backend
   whatsappMessage?: string;
 };
 
@@ -17,11 +17,10 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch("/api/products") // your API should use getProductsFromSheet
       .then((res) => res.json())
       .then((data) => {
-        // Latest 3 products
-        const latest3 = data.slice(-3).reverse();
+        const latest3 = data.slice(-3).reverse(); // latest 3 products
         setProducts(latest3);
       })
       .catch(console.error)
@@ -76,49 +75,55 @@ export default function HomePage() {
         </div>
       </section>
 
- {/* Products Grid */}
-<section className="py-20 bg-white/70 backdrop-blur-sm relative z-10" id="products">
-  <div className="max-w-7xl mx-auto px-6 text-center">
-    <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
-      Yeni kolleksiya
-    </h2>
-    <p className="text-gray-600 text-lg mb-12">
-      Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
-    </p>
-
-    {products.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {products.map((p, idx) => (
-          <ProductCard
-            key={p.id ?? idx}
-            product={{
-              id: p.id ?? `product-${idx}`,
-              name: p.name || "Məhsul adı yoxdur",
-              price: p.price || "0",
-              imageUrl: p.imageUrl || "/logo.png",
-              whatsappMessage:
-                p.whatsappMessage ||
-                `Salam, bu məhsulu sifariş etmək istəyirəm: ${p.name || "Məhsul"}`,
-            }}
-          />
-        ))}
-      </div>
-    ) : (
-      <p className="text-gray-500 mt-10 text-lg">Heç bir məhsul tapılmadı.</p>
-    )}
-
-    {/* Button below grid */}
-    <div className="mt-12">
-      <a
-        href="/products"
-        className="inline-block px-10 py-3 bg-gradient-to-r from-[#d4a373] to-[#e0c097] text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+      {/* Products Grid */}
+      <section
+        className="py-20 bg-white/70 backdrop-blur-sm relative z-10"
+        id="products"
       >
-        💎 Bütün məhsulları gör
-      </a>
-    </div>
-  </div>
-</section>
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-serif mb-3 text-[#1A1A1A]">
+            Yeni kolleksiya
+          </h2>
+          <p className="text-gray-600 text-lg mb-12">
+            Keyfiyyətli və zərif çantalar — gündəlik və xüsusi hallar üçün.
+          </p>
 
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              {products.map((p, idx) => (
+                <ProductCard
+                  key={p.id ?? idx}
+                  product={{
+                    id: p.id ?? `product-${idx}`,
+                    name: p.name || "Məhsul adı yoxdur",
+                    price: p.price || "0",
+                    imageUrls: p.imageUrls
+                      ? [p.imageUrls[0]] // ✅ only first image for homepage
+                      : ["/logo.png"],
+                    whatsappMessage:
+                      p.whatsappMessage ||
+                      `Salam, bu məhsulu sifariş etmək istəyirəm: ${
+                        p.name || "Məhsul"
+                      }`,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 mt-10 text-lg">Heç bir məhsul tapılmadı.</p>
+          )}
+
+          {/* Button below grid */}
+          <div className="mt-12">
+            <a
+              href="/products"
+              className="inline-block px-10 py-3 bg-gradient-to-r from-[#d4a373] to-[#e0c097] text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              💎 Bütün məhsulları gör
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="border-t border-[#f0e4d8] py-10 mt-24 bg-[#fffaf7] relative z-10">
@@ -135,11 +140,8 @@ export default function HomePage() {
           >
             @madenabrand
           </a>
-          
         </div>
-        
       </footer>
     </main>
   );
 }
-

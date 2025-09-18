@@ -5,24 +5,30 @@ import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 export async function GET() {
   try {
     const products: SheetProduct[] = await getProductsFromSheet();
-    return NextResponse.json(products);
+
+    // Make sure each product has `imageUrls` as an array
+    const normalized = products.map((p) => ({
+      ...p,
+      imageUrls: p.imageUrls || (p.imageUrl ? [p.imageUrl] : []),
+    }));
+
+    return NextResponse.json(normalized);
   } catch (err) {
     console.error("❌ Failed to fetch products:", err);
 
-    // Fallback sample products (safe for UI testing)
     const fallback: SheetProduct[] = [
       {
         id: "MB-001",
         name: "Classic Leather Tote",
         price: "120",
-        imageUrl: "/logo.png",
+        imageUrls: ["/logo.png"], // ✅ changed to array
         whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
       },
       {
         id: "MB-002",
         name: "Elegant Shoulder Bag",
         price: "150",
-        imageUrl: "/logo.png",
+        imageUrls: ["/logo.png"], // ✅ changed to array
         whatsappMessage: "Salam, mən Elegant Shoulder Bag sifariş etmək istəyirəm.",
       },
     ];
