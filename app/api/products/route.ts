@@ -1,4 +1,3 @@
-// app/api/products/route.ts
 import { NextResponse } from "next/server";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 
@@ -12,14 +11,15 @@ export async function GET() {
       imageUrls: Array.isArray(p.imageUrls)
         ? p.imageUrls
         : p.imageUrls
-        ? [p.imageUrls].flat()
-        : [], // fallback to empty array
+        ? [p.imageUrls]
+        : [],
     }));
 
     return NextResponse.json(normalized);
   } catch (err) {
     console.error("❌ Failed to fetch products:", err);
 
+    // Fallback products
     const fallback: SheetProduct[] = [
       {
         id: "MB-001",

@@ -1,4 +1,3 @@
-// app/product/[id]/page.tsx
 import React from "react";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 import Link from "next/link";
@@ -11,10 +10,10 @@ async function getProductById(
 ): Promise<{ product?: SheetProduct; products: SheetProduct[] }> {
   const products: SheetProduct[] = await getProductsFromSheet();
 
-  // Ensure every product has imageUrls for slider
+  // Normalize imageUrls to always be an array
   const normalized = products.map((p) => ({
     ...p,
-    imageUrls: p.imageUrls || (p.imageUrl ? [p.imageUrl] : []),
+    imageUrls: Array.isArray(p.imageUrls) ? p.imageUrls : p.imageUrls ? [p.imageUrls] : [],
   }));
 
   const product = normalized.find((p) => p.id === id);
@@ -22,11 +21,11 @@ async function getProductById(
 }
 
 interface Props {
-  params: Promise<{ id: string }>; // ✅ params is now a Promise in Next.js 15
+  params: Promise<{ id: string }>; // Next.js 15 App Router
 }
 
 export default async function ProductPage({ params }: Props) {
-  const { id } = await params; // ✅ unwrap the promise
+  const { id } = await params;
   const { product, products } = await getProductById(id);
 
   if (!product) {
