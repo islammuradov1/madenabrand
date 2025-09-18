@@ -6,10 +6,14 @@ export async function GET() {
   try {
     const products: SheetProduct[] = await getProductsFromSheet();
 
-    // Make sure each product has `imageUrls` as an array
+    // Ensure imageUrls is always an array
     const normalized = products.map((p) => ({
       ...p,
-      imageUrls: p.imageUrls || (p.imageUrl ? [p.imageUrl] : []),
+      imageUrls: Array.isArray(p.imageUrls)
+        ? p.imageUrls
+        : p.imageUrls
+        ? [p.imageUrls].flat()
+        : [], // fallback to empty array
     }));
 
     return NextResponse.json(normalized);
@@ -21,14 +25,14 @@ export async function GET() {
         id: "MB-001",
         name: "Classic Leather Tote",
         price: "120",
-        imageUrls: ["/logo.png"], // ✅ changed to array
+        imageUrls: ["/logo.png"],
         whatsappMessage: "Salam, mən Classic Leather Tote sifariş etmək istəyirəm.",
       },
       {
         id: "MB-002",
         name: "Elegant Shoulder Bag",
         price: "150",
-        imageUrls: ["/logo.png"], // ✅ changed to array
+        imageUrls: ["/logo.png"],
         whatsappMessage: "Salam, mən Elegant Shoulder Bag sifariş etmək istəyirəm.",
       },
     ];
