@@ -1,13 +1,19 @@
+"use client";
+
 import React from "react";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 
+type ProductPageProps = {
+  params: { id: string };
+};
+
 /**
  * Helper: Get single product by ID
  */
-async function getProductById(id: string) {
+async function getProductById(id: string): Promise<{ product?: SheetProduct; products: SheetProduct[] }> {
   const products: SheetProduct[] = await getProductsFromSheet();
   const product = products.find((p) => p.id === id);
   return { product, products };
@@ -16,7 +22,7 @@ async function getProductById(id: string) {
 /**
  * Page: Product Details + Similar Products
  */
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params }: ProductPageProps) {
   const { product, products } = await getProductById(params.id);
 
   if (!product) {
@@ -24,7 +30,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
       <div className="p-20 text-center">
         <h1 className="text-3xl font-bold text-red-600">Məhsul tapılmadı ❌</h1>
         <p className="mt-4 text-lg text-gray-600">
-          Axtardığınız məhsul mövcud deyil. 
+          Axtardığınız məhsul mövcud deyil.
           <Link href="/" className="text-[#d4a373] hover:underline ml-1">
             Bütün məhsullara baxın →
           </Link>
