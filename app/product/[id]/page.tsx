@@ -1,29 +1,22 @@
-
-
 import React from "react";
 import { getProductsFromSheet, SheetProduct } from "@/lib/sheets";
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 
-type ProductPageProps = {
-  params: { id: string };
-};
-
-/**
- * Helper: Get single product by ID
- */
+// Helper: Get single product by ID
 async function getProductById(id: string): Promise<{ product?: SheetProduct; products: SheetProduct[] }> {
   const products: SheetProduct[] = await getProductsFromSheet();
   const product = products.find((p) => p.id === id);
   return { product, products };
 }
 
-/**
- * Page: Product Details + Similar Products
- */
-export default async function ProductPage({ params }: ProductPageProps) {
-  const { product, products } = await getProductById(params.id);
+// Page: Product Details + Similar Products
+export default async function ProductPage({ params }: { params: any }) {
+  // Await params first
+  const { id } = await params;
+
+  const { product, products } = await getProductById(id);
 
   if (!product) {
     return (
@@ -39,10 +32,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     );
   }
 
-  // Pick random 3 similar products
   const similarProducts = products
     .filter((p) => p.id !== product.id)
-    .sort(() => Math.random() - 0.5) // shuffle
+    .sort(() => Math.random() - 0.5)
     .slice(0, 3);
 
   return (
@@ -58,7 +50,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {/* Product Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Image */}
         <div className="relative w-full h-[500px] rounded-2xl overflow-hidden shadow-lg">
           <Image
             src={product.imageUrl || "/logo.png"}
@@ -69,7 +60,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           />
         </div>
 
-        {/* Info */}
         <div className="flex flex-col justify-center">
           <h1 className="text-4xl font-serif font-semibold text-[#1A1A1A] leading-tight">
             {product.name}

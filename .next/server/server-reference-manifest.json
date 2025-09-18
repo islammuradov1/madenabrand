@@ -1,5 +1,16 @@
 {
-  "node": {},
+  "node": {
+    "c9d80b96e4a83080a8a572030571ddc67f0e32cf": {
+      "workers": {
+        "app/api/products/route": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FApplications%2FMadenaBrand%2Fmadenabrand-1%2Flib%2Fsheets.ts%22%2C%5B%22getProductsFromSheet%22%5D%5D%5D&encryptionKey=lqlPUtR4aObz0vokgRV%2BAu1UlH7h0wKP78dtbgiRM7c%3D&__client_imported__=!",
+        "app/product/[id]/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FApplications%2FMadenaBrand%2Fmadenabrand-1%2Flib%2Fsheets.ts%22%2C%5B%22getProductsFromSheet%22%5D%5D%5D&encryptionKey=lqlPUtR4aObz0vokgRV%2BAu1UlH7h0wKP78dtbgiRM7c%3D&__client_imported__=!"
+      },
+      "layer": {
+        "app/api/products/route": "rsc",
+        "app/product/[id]/page": "rsc"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "ZQmqweCrQQeUkQD/kGUmx+dw3N0hgdAjs7KR9SBXx5k="
+  "encryptionKey": "lqlPUtR4aObz0vokgRV+Au1UlH7h0wKP78dtbgiRM7c="
 }

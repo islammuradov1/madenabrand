@@ -1,3 +1,4 @@
+"use server";
 // lib/sheets.ts
 import { google } from "googleapis";
 
