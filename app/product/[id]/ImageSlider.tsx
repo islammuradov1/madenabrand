@@ -44,7 +44,7 @@ export default function ImageSlider({
             src={img}
             alt={`${productName} image ${index + 1}`}
             fill
-            className={`object-contain transition-opacity duration-700 ${
+            className={`object-contain transition-opacity duration-700 ease-in-out ${
               index === current ? "opacity-100" : "opacity-0"
             }`}
             priority={index === current}
