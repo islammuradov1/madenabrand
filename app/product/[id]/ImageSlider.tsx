@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   images: string[];
@@ -37,25 +36,21 @@ export default function ImageSlider({
 
   return (
     <div className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] flex justify-center items-center overflow-hidden rounded-2xl shadow-lg group">
-      {/* Animated Image */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={images[current]}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -30 }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0"
-        >
+      {/* Images with fade effect */}
+      <div className="absolute inset-0">
+        {images.map((img, index) => (
           <Image
-            src={images[current]}
-            alt={`${productName} image ${current + 1}`}
+            key={index}
+            src={img}
+            alt={`${productName} image ${index + 1}`}
             fill
-            className="object-contain"
-            priority
+            className={`object-contain transition-opacity duration-700 ${
+              index === current ? "opacity-100" : "opacity-0"
+            }`}
+            priority={index === current}
           />
-        </motion.div>
-      </AnimatePresence>
+        ))}
+      </div>
 
       {/* Navigation Buttons */}
       {images.length > 1 && (
