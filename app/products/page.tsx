@@ -3,18 +3,11 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-
-type Product = {
-  id?: string;
-  name: string;
-  price: string;
-  imageUrl?: string;
-  whatsappMessage?: string;
-};
+import { SheetProduct } from "@/lib/sheets";
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<SheetProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<SheetProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -24,9 +17,19 @@ export default function ProductsPage() {
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data); // initially show all
+      .then((data: SheetProduct[]) => {
+        // Normalize imageUrls
+        const normalized: SheetProduct[] = data.map((p) => ({
+          ...p,
+          imageUrls: Array.isArray(p.imageUrls)
+            ? p.imageUrls
+            : p.imageUrls
+            ? [p.imageUrls]
+            : [],
+        }));
+
+        setProducts(normalized);
+        setFilteredProducts(normalized);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
