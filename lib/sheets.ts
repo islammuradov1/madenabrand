@@ -6,13 +6,12 @@ export type SheetProduct = {
   id: string;
   name: string;
   price: string;
-  imageUrls: string[]; // multiple images
+  imageUrls: string[];
   whatsappMessage: string;
 };
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 
-// Parse service account JSON from base64
 const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64
   ? JSON.parse(
       Buffer.from(
@@ -22,16 +21,9 @@ const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64
     )
   : null;
 
-/**
- * Fetch products from Google Sheet
- */
 export async function getProductsFromSheet(): Promise<SheetProduct[]> {
   if (!SHEET_ID || !serviceAccount) {
-    console.warn(
-      "⚠️ Missing GOOGLE_SHEET_ID or service account credentials. Returning sample product."
-    );
-
-    // Sample product for homepage if credentials are missing
+    console.warn("⚠️ Missing credentials, returning fallback product.");
     return [
       {
         id: "MB-001",
@@ -54,16 +46,9 @@ export async function getProductsFromSheet(): Promise<SheetProduct[]> {
   const sheets = google.sheets({ version: "v4", auth });
 
   try {
-    // Update range according to your sheet
     const range = "'1 vərəq'!A2:E";
-
-    const res = await sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range,
-    });
-
+    const res = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range });
     const rows = res.data.values || [];
-
     const validRows = rows.filter((r) => r[0] && r[0].toString().trim() !== "");
 
     return validRows.map((r, idx): SheetProduct => {
@@ -71,29 +56,20 @@ export async function getProductsFromSheet(): Promise<SheetProduct[]> {
       const name = r[1]?.toString().trim() || "Unnamed Product";
       const price = r[2]?.toString().trim() || "0";
 
-      // Take multiple images from comma-separated values
-      const imageUrls =
+      const imageUrls: string[] =
         r[3]
           ?.toString()
           .split(",")
-          .map((url) => url.trim())
+          .map((url: string) => url.trim())
           .filter(Boolean) || ["/logo.png"];
 
       const whatsappMessage =
-        r[4]?.toString().trim() ||
-        `Salam, mən ${name} (ID: ${id}) sifariş etmək istəyirəm.`;
+        r[4]?.toString().trim() || `Salam, mən ${name} (ID: ${id}) sifariş etmək istəyirəm.`;
 
-      return {
-        id,
-        name,
-        price,
-        imageUrls,
-        whatsappMessage,
-      };
+      return { id, name, price, imageUrls, whatsappMessage };
     });
   } catch (err) {
     console.error("Error fetching products from Google Sheets:", err);
-    // Fallback to a sample product
     return [
       {
         id: "MB-001",
